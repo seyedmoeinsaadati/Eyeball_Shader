@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: eyeball_1
+  m_Name: eyeball_14
   m_Shader: {fileID: 4800000, guid: b1c4929b8aa495941affaa14523960ec, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -24,7 +24,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BTexture:
-        m_Texture: {fileID: 2800000, guid: d17d785f6f45d5941bb196ebb7792163, type: 3}
+        m_Texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -72,7 +72,7 @@ Material:
     - _BumpScale: 1
     - _CRadius: 0.02
     - _CScale: 2
-    - _CSmooth: 0.002
+    - _CSmooth: 0.014
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -94,9 +94,9 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BInColor: {r: 0.5566038, g: 0.2989273, b: 0, a: 1}
+    - _BInColor: {r: 0, g: 0.6415094, b: 0.48666236, a: 1}
     - _BOutColor: {r: 0, g: 0, b: 0, a: 1}
-    - _BTextureTiling: {r: 2, g: 1, b: 1, a: 0}
+    - _BTextureTiling: {r: 5, g: 2.5, b: 5, a: 0}
     - _BTintColor: {r: 0, g: 0, b: 0, a: 1}
     - _CColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

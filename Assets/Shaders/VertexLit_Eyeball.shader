@@ -6,7 +6,9 @@
         [Space(5)]
         _AColor("Color", Color) = (1,1,1)
         _ATexture("Texture", 2D) = "white"{}
-        // _ATextureTiling("Scale(xy), Zoom (z)", Vector) = (2,1,1,0)
+        [KeywordEnum(Polar, Cartesian)] _ATextureMode("Texture Mode", Float) = 0
+        _ATextureTiling("Polar: Scale(xy), Zoom (z)", Vector) = (2,1,1,0)
+
 
         [Space(5)]
         [Header(B)]
@@ -14,12 +16,14 @@
         _BInColor("Tint Color", Color) = (1,1,1)
         _BTintColor("Shadow Color In", Color) = (1,1,1)
         _BOutColor("Shadow Color Out", Color) = (1,1,1)
-        _BInSmooth("Smoothness In", Range(0, 0.5))= 1
-        _BOutSmooth("Smoothness Out", Range(0, 0.5))= 1
-        _BRadius("Radius", Range(0,.2))= 1
-        _BScale("Scale", Range(0, 10))= 1
+        _BInSmooth("Smoothness In", Range(0, 0.5))= 0
+        _BOutSmooth("Smoothness Out", Range(0, 0.5))= 0
+        _BRadius("Radius", Range(0,.2))= 0
+        _BScale("Scale", Range(0, 10))= 2
+        
         _BTexture("Texture", 2D) = "white"{}
-        _BTextureTiling("Scale(xy), Zoom (z)", Vector) = (2,1,1,0)
+        [KeywordEnum(Polar, Cartesian)] _BTextureMode("Texture Mode", Float) = 0        
+        _BTextureTiling("Polar: Scale(xy), Zoom (z)", Vector) = (2,1,1,0)
 
         [Space(5)]
         [Header(C)]
@@ -54,6 +58,8 @@
             #pragma fragment frag
             #pragma multi_compile __ _RIMTOGGLE_ON
             #pragma multi_compile __ _NOISETOGGLE_ON
+            #pragma multi_compile _BTEXTUREMODE_POLAR _BTEXTUREMODE_CARTESIAN
+            #pragma multi_compile _ATEXTUREMODE_POLAR _ATEXTUREMODE_CARTESIAN
             
             #include "UnityCG.cginc"
             #include "UnityLightingCommon.cginc"
@@ -113,7 +119,7 @@
 
             // B Section
             sampler2D _BTexture;
-            float4 _BTintColor ,_BInColor, _BOutColor, _BTextureTiling;
+            float4 _BTintColor ,_BInColor, _BOutColor, _BTextureTiling, _BTexture_ST;
             float _BRadius, _BScale, _BInSmooth, _BOutSmooth;
 
             // C Section
@@ -159,16 +165,17 @@
             {
                 float r, a;
                 float2 uv = i.uv;
-                // uv = i.uv;
-                // uv *= _ATextureTiling.xy;
-                // uv.x +=  _ATextureTiling.x * -.75;
-                // uv.y += _ATextureTiling.y * -.5;
-                // float r = length(uv) * 2;
-                // float a = atan(uv.y / uv.x);
-                // uv = float2(r, a);// * _ATextureTiling.z;
-
+#if _ATEXTUREMODE_POLAR
+                uv *= _ATextureTiling.xy;
+                uv.x += _ATextureTiling.x * -.25;
+                uv.y += _ATextureTiling.y * -.5;
+                r = length(uv) * 2;
+                a = atan(uv.y / uv.x);
+                uv = float2(r, a) * _ATextureTiling.z;
+#elif _ATEXTUREMODE_CARTESIAN
                 uv *= _ATexture_ST.xy;
-                uv +=  _ATexture_ST.zw;
+                uv += _ATexture_ST.zw;
+#endif
                 fixed4 col = _AColor * tex2D(_ATexture, uv);
                 
                 uv = i.uv;
@@ -180,16 +187,21 @@
                 bCircle = circle(uv, .5, _BRadius, 0);
                 col = lerp(col, _BTintColor, bCircle);
                 bCircle = inCircle(uv, .5, _BRadius, _BInSmooth);
-
-                // mapping texture on sphere
+                
+                // mapping texture on sphere (polar system / cartesian)
                 uv = i.uv;
+#if _BTEXTUREMODE_POLAR
                 uv *= _BTextureTiling.xy;
                 uv.x += _BTextureTiling.x * -.75;
                 uv.y += _BTextureTiling.y * -.5;
-
                 r = length(uv) * 2;
                 a = atan(uv.y / uv.x);
                 uv = float2(r, a) * _BTextureTiling.z;
+#elif _BTEXTUREMODE_CARTESIAN
+                uv *= _BTexture_ST.xy;
+                uv += _BTexture_ST.zw;
+#endif
+
                 col = lerp(col, _BInColor * tex2D(_BTexture, uv), bCircle);
                 
                 uv = i.uv;
